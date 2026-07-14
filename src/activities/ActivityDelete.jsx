@@ -2,7 +2,7 @@ import { useState } from "react";
 import { deleteActivity } from "../api/activities";
 import { useAuth } from "../auth/AuthContext";
 
-export default function ActivityDelete({ id }) {
+export default function ActivityDelete({ id, syncActivities }) {
   const { token } = useAuth();
   const [error, setError] = useState();
 
@@ -10,6 +10,7 @@ export default function ActivityDelete({ id }) {
     setError(null);
     try {
       await deleteActivity(token, id);
+      syncActivities();
     } catch (error) {
       setError(error.message);
     }
