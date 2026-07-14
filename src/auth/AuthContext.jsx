@@ -13,10 +13,11 @@ const API = import.meta.env.VITE_API;
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState();
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
 
-  const register = async (credentials) => {
-    const response = await fetch(API + "/users/register", {
+  // Adding func to routem type should be "register" or "login"
+  const route = async (credentials, type) => {
+    const response = await fetch(API + "/users/" + type, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -26,19 +27,15 @@ export function AuthProvider({ children }) {
       throw Error(result.message);
     }
     setToken(result.token);
+    sessionStorage.setItem("token", result.token);
+  };
+
+  const register = async (credentials) => {
+    route(credentials, "register");
   };
 
   const login = async (credentials) => {
-    const response = await fetch(API + "/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
-    const result = await response.json();
-    if (!response.ok) {
-      throw Error(result.message);
-    }
-    setToken(result.token);
+    route(credentials, "login");
   };
 
   const logout = () => setToken(null);
