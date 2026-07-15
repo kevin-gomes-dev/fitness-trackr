@@ -38,7 +38,10 @@ export function AuthProvider({ children }) {
     route(credentials, "login");
   };
 
-  const logout = () => setToken(null);
+  const logout = () => {
+    setToken(null);
+    sessionStorage.removeItem("token");
+  };
 
   const value = { token, register, login, logout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
